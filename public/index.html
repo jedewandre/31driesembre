@@ -86,6 +86,12 @@
   @keyframes points { to { transform: translate(60px, 30px); } }
   main { position: relative; z-index: 1; width: 100%; max-width: 760px; }
 
+  /* téléphone : titre collé sous la boule, compteur centré dans la place restante */
+  @media (max-width: 600px) {
+    body { align-items: start; }
+    main { min-height: calc(100svh - 146px); display: flex; flex-direction: column; }
+    .compteur, .bravo { margin: auto 0; }
+  }
   @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; } }
 </style>
 </head>
