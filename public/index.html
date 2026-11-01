@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>31 Driesembre</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Monoton&family=Orbitron:wght@500;800&display=swap" rel="stylesheet">
+<style>
+  :root { --rose:#ff2bd6; --vert:#39ff14; --cyan:#00f0ff; --jaune:#fff01f; }
+  * { box-sizing: border-box; margin: 0; }
+  body {
+    min-height: 100vh; display: grid; place-items: center; text-align: center;
+    background: #07000f; color: #fff; font-family: Orbitron, sans-serif; overflow-x: hidden;
+    padding: 130px 16px 16px; /* place pour la boule suspendue en haut */
+  }
+  /* halos fluo animés en fond */
+  body::before, body::after {
+    content: ""; position: fixed; width: 60vmax; height: 60vmax; border-radius: 50%;
+    filter: blur(90px); opacity: .35; z-index: -1; animation: flotte 12s ease-in-out infinite alternate;
+  }
+  body::before { background: var(--rose); top: -20vmax; left: -20vmax; }
+  body::after  { background: var(--cyan); bottom: -20vmax; right: -20vmax; animation-delay: -6s; }
+  @keyframes flotte { to { transform: translate(15vmax, 10vmax) scale(1.2); } }
+
+  h1 {
+    font-family: Monoton, cursive; font-weight: 400; font-size: clamp(2rem, 8vw, 5.5rem);
+    color: var(--rose); text-shadow: 0 0 8px var(--rose), 0 0 30px var(--rose);
+    animation: clignote 3s infinite;
+  }
+  @keyframes clignote { 0%,92%,100% { opacity: 1 } 94% { opacity: .3 } 96% { opacity: 1 } 98% { opacity: .5 } }
+  .sous-titre { margin: .5em 0 2em; color: var(--vert); letter-spacing: .3em; text-transform: uppercase;
+    text-shadow: 0 0 10px var(--vert); font-size: clamp(.8rem, 2.5vw, 1.2rem); }
+
+  .compteur { display: flex; gap: clamp(.35rem, 2vw, 2rem); justify-content: center; }
+  .case {
+    flex: 1 1 0; min-width: 0; max-width: 150px; padding: 1rem .25rem; border: 2px solid var(--c);
+    border-radius: 16px; box-shadow: 0 0 15px var(--c), inset 0 0 15px var(--c);
+    background: rgba(0,0,0,.4);
+  }
+  .case span { display: block; font-size: clamp(1.5rem, 8vw, 4.5rem); font-weight: 800;
+    color: var(--c); text-shadow: 0 0 10px var(--c); font-variant-numeric: tabular-nums; }
+  .case small { text-transform: uppercase; letter-spacing: .08em; font-size: clamp(.5rem, 2.2vw, .9rem); }
+
+  .bravo { display: none; font-size: clamp(2rem, 8vw, 5rem); color: var(--jaune);
+    text-shadow: 0 0 10px var(--jaune), 0 0 40px var(--rose); animation: pulse 1s infinite alternate; }
+  @keyframes pulse { to { transform: scale(1.1); } }
+  .fete .compteur { display: none; }
+  .fete .bravo { display: block; }
+
+  /* boule à facettes : grille de miroirs qui défile = rotation */
+  .boule {
+    position: absolute; z-index: 1; top: 40px; left: calc(50% - 35px);
+    width: 70px; height: 70px; border: 0; border-radius: 50%;
+    cursor: pointer; -webkit-tap-highlight-color: transparent; touch-action: manipulation;
+    background:
+      linear-gradient(90deg, transparent 85%, #1a1a2a 85%) 0 0 / 7px 7px,
+      linear-gradient(0deg, transparent 85%, #1a1a2a 85%) 0 0 / 7px 7px,
+      radial-gradient(circle at 35% 30%, #fff, #c9c9d6 25%, #6c6c80 65%, #1a1a2a);
+    box-shadow: inset -8px -8px 16px #0009, 0 0 20px #fff4;
+    animation: tourne 4s linear infinite;
+    transition: box-shadow .4s, transform .15s;
+  }
+  .boule:active { transform: scale(.95); }
+  .boule:focus-visible { outline: 3px solid var(--jaune); outline-offset: 6px; }
+  .boule::before { content: ""; position: absolute; bottom: 100%; left: 50%; width: 2px; height: 40px; background: #888; }
+  @keyframes tourne { to { background-position: 70px 0, 70px 0, 0 0; } }
+  .disco-on .boule { box-shadow: inset -8px -8px 16px #0009, 0 0 30px #fff, 0 0 80px var(--rose); animation-duration: 1.5s; }
+
+  /* lumières disco : faisceaux qui tournent + points lumineux */
+  .disco { position: fixed; inset: 0; pointer-events: none; overflow: hidden; opacity: 0; transition: opacity .5s; z-index: 0; }
+  .disco-on .disco { opacity: 1; }
+  .disco::before {
+    content: ""; position: absolute; left: 50%; top: 0; width: 300vmax; height: 300vmax;
+    background: repeating-conic-gradient(#ff2bd655 0 5deg, transparent 5deg 20deg, #00f0ff55 20deg 25deg,
+      transparent 25deg 40deg, #39ff1455 40deg 45deg, transparent 45deg 60deg);
+    animation: faisceaux 8s linear infinite;
+  }
+  .disco::after {
+    content: ""; position: absolute; inset: -60px;
+    background: radial-gradient(circle, #fffc 0 2px, transparent 3px) 0 0 / 60px 60px,
+                radial-gradient(circle, #fff01f99 0 3px, transparent 4px) 30px 30px / 90px 90px;
+    animation: points 3s linear infinite;
+  }
+  @keyframes faisceaux { from { transform: translate(-50%, -50%) rotate(0) } to { transform: translate(-50%, -50%) rotate(360deg) } }
+  @keyframes points { to { transform: translate(60px, 30px); } }
+  main { position: relative; z-index: 1; width: 100%; max-width: 760px; }
+
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; } }
+</style>
+</head>
+<body>
+  <div class="disco" aria-hidden="true"></div>
+  <button class="boule" id="boule" aria-pressed="false" aria-label="Allumer les lumières disco pour tout le monde"></button>
+  <main>
+    <h1>31 Driesembre</h1>
+    <p class="sous-titre">Soirée fluo · Cap sur <span id="titre">2027</span></p>
+
+    <div class="compteur" role="timer" aria-label="Compte à rebours jusqu'au Nouvel An">
+      <div class="case" style="--c:var(--rose)"><span id="j">00</span><small>Jours</small></div>
+      <div class="case" style="--c:var(--vert)"><span id="h">00</span><small>Heures</small></div>
+      <div class="case" style="--c:var(--cyan)"><span id="m">00</span><small>Minutes</small></div>
+      <div class="case" style="--c:var(--jaune)"><span id="s">00</span><small>Secondes</small></div>
+    </div>
+
+    <p class="bravo">Bonne année&nbsp;! 🎉</p>
+  </main>
+
+<script>
+  const now0 = new Date();
+  // Le 1er janvier, on reste en mode fête toute la journée
+  const fete = () => { const d = new Date(); return d.getMonth() === 0 && d.getDate() === 1; };
+  const annee = fete() ? now0.getFullYear() : now0.getFullYear() + 1;
+  const cible = new Date(annee, 0, 1); // minuit heure locale
+  document.getElementById('titre').textContent = annee;
+
+  const pad = n => String(n).padStart(2, '0');
+  function tick() {
+    const reste = cible - new Date();
+    if (reste <= 0) { document.body.classList.add('fete'); return; }
+    const t = Math.floor(reste / 1000);
+    j.textContent = pad(Math.floor(t / 86400));
+    h.textContent = pad(Math.floor(t / 3600) % 24);
+    m.textContent = pad(Math.floor(t / 60) % 60);
+    s.textContent = pad(t % 60);
+    setTimeout(tick, 1000 - Date.now() % 1000);
+  }
+  tick();
+</script>
+<!-- SDK + config servis par Firebase Hosting (pas de clés à copier) -->
+<script src="/__/firebase/10.14.1/firebase-app-compat.js"></script>
+<script src="/__/firebase/10.14.1/firebase-database-compat.js"></script>
+<script src="/__/firebase/init.js"></script>
+<script>
+  // On partage l'heure (serveur) du dernier clic : lumières allumées 10 s après, pour tout le monde
+  const db = firebase.database();
+  const disco = db.ref('disco');
+  let decalage = 0, fin = 0;
+  db.ref('.info/serverTimeOffset').on('value', snap => { decalage = snap.val() || 0; });
+  function maj() {
+    const on = Date.now() + decalage < fin;
+    document.body.classList.toggle('disco-on', on);
+    boule.setAttribute('aria-pressed', on);
+  }
+  disco.on('value', snap => { fin = (Number(snap.val()) || 0) + 10000; maj(); });
+  setInterval(maj, 500);
+  boule.addEventListener('click', () => disco.set(firebase.database.ServerValue.TIMESTAMP));
+</script>
+</body>
+</html>
