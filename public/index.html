@@ -119,6 +119,7 @@
     </div>
 
     <p class="bravo">Bonne année&nbsp;! 🎉</p>
+    <p style="margin-top:2em"><a href="/playlist.html" style="color:var(--cyan);text-shadow:0 0 10px var(--cyan)">🎶 Propose et vote pour la playlist</a></p>
   </main>
 
 <script>
@@ -165,8 +166,33 @@
   const disco = db.ref('disco');
   let decalage = 0, fin = 0;
   db.ref('.info/serverTimeOffset').on('value', snap => { decalage = snap.val() || 0; });
+  // Petit beat disco synthétisé (10 s, 120 bpm) : kick, charley en contretemps, basse en octaves.
+  // Les navigateurs bloquent le son tant que la personne n'a pas touché la page : les autres l'entendent s'ils ont déjà cliqué.
+  let audio, joue = false;
+  function musique() {
+    audio ??= new AudioContext();
+    audio.resume();
+    const t0 = audio.currentTime + .05, temps = .5, basse = [55, 110, 55, 110, 49, 98, 49, 98, 65.4, 130.8, 65.4, 130.8, 49, 98, 49, 98];
+    const note = (t, freq, fin, dur, type, vol) => {
+      const o = audio.createOscillator(), g = audio.createGain();
+      o.type = type; o.frequency.setValueAtTime(freq, t); o.frequency.exponentialRampToValueAtTime(fin, t + dur);
+      g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(.001, t + dur);
+      o.connect(g).connect(audio.destination); o.start(t); o.stop(t + dur);
+    };
+    for (let i = 0; i < 20; i++) {
+      const t = t0 + i * temps;
+      note(t, 150, 40, .3, 'sine', .9);                                   // kick
+      note(t + temps / 2, 8000, 6000, .05, 'square', .04);                // charley
+      note(t, basse[(2 * i) % 16], basse[(2 * i) % 16], .22, 'sawtooth', .15);
+      note(t + temps / 2, basse[(2 * i + 1) % 16], basse[(2 * i + 1) % 16], .22, 'sawtooth', .15);
+    }
+  }
+  // Débloque le son au premier toucher (exigé par Safari/Chrome)
+  addEventListener('pointerdown', () => { audio ??= new AudioContext(); audio.resume(); });
   function maj() {
     const on = Date.now() + decalage < fin;
+    if (on && !joue) musique();
+    joue = on;
     document.body.classList.toggle('disco-on', on);
     boule.setAttribute('aria-pressed', on);
   }

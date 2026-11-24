@@ -6,6 +6,68 @@
       ".read": true,
       ".write": true,
       ".validate": "newData.val() === now"
+    },
+    "songs": {
+      ".read": true,
+      "$id": {
+        ".write": "!data.exists() || (root.child('secrets/' + $id).exists() && !root.child('preuves/' + $id).exists() && newData.parent().parent().child('preuves/' + $id).val() === root.child('secrets/' + $id).val())",
+        ".validate": "newData.hasChildren(['titre', 'url', 'decennie', 'votes']) && (data.exists() || newData.child('votes').val() === 0)",
+        "titre": {
+          ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 120"
+        },
+        "url": {
+          ".validate": "newData.isString() && newData.val().length <= 300 && newData.val().matches(/^https:\\/\\/open\\.spotify\\.com\\/(intl-[a-z]{2}(-[a-z]{2})?\\/)?(track|album|playlist|artist|episode|show)\\/[A-Za-z0-9]{22}(\\?.*)?$/)"
+        },
+        "decennie": {
+          ".validate": "newData.isNumber() && (newData.val() === 2027 || (newData.val() >= 1950 && newData.val() <= 2020 && newData.val() % 10 === 0))"
+        },
+        "votes": {
+          ".write": "data.exists() && newData.isNumber() && newData.val() !== data.val() && newData.val() >= data.val() - 2 && newData.val() <= data.val() + 2",
+          ".validate": "newData.isNumber() && (!data.exists() || (newData.val() >= data.val() - 2 && newData.val() <= data.val() + 2))"
+        },
+        "$other": {
+          ".validate": false
+        }
+      }
+    },
+    "secrets": {
+      "$id": {
+        ".write": "!data.exists() && !root.child('songs/' + $id).exists() && newData.parent().parent().child('songs/' + $id).exists()",
+        ".validate": "newData.isString() && newData.val().length >= 20 && newData.val().length <= 64"
+      }
+    },
+    "commentaires": {
+      ".read": true,
+      "$song": {
+        ".write": "!newData.exists() && root.child('secrets/' + $song).exists() && !root.child('preuves/' + $song).exists() && newData.parent().parent().child('preuves/' + $song).val() === root.child('secrets/' + $song).val()",
+        "$c": {
+          ".write": "(!data.exists() && root.child('songs/' + $song).exists()) || (data.exists() && root.child('secretsComs/' + $song + '/' + $c).exists() && !root.child('preuvesComs/' + $song + '/' + $c).exists() && newData.parent().parent().parent().child('preuvesComs/' + $song + '/' + $c).val() === root.child('secretsComs/' + $song + '/' + $c).val())",
+          ".validate": "newData.hasChildren(['texte', 't'])",
+          "texte": { ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 200" },
+          "t": { ".validate": "newData.val() === now || newData.val() === data.val()" },
+          "$other": { ".validate": false }
+        }
+      }
+    },
+    "secretsComs": {
+      "$song": {
+        "$c": {
+          ".write": "!data.exists() && !root.child('commentaires/' + $song + '/' + $c).exists() && newData.parent().parent().parent().child('commentaires/' + $song + '/' + $c).exists()",
+          ".validate": "newData.isString() && newData.val().length >= 20 && newData.val().length <= 64"
+        }
+      }
+    },
+    "preuvesComs": {
+      "$song": {
+        "$c": {
+          ".write": "!newData.exists() || newData.val() === root.child('secretsComs/' + $song + '/' + $c).val()"
+        }
+      }
+    },
+    "preuves": {
+      "$id": {
+        ".write": "!newData.exists() || newData.val() === root.child('secrets/' + $id).val()"
+      }
     }
   }
 }

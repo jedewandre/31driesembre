@@ -1,0 +1,360 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Playlist · 31 Driesembre</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Monoton&family=Orbitron:wght@500;800&display=swap" rel="stylesheet">
+<style>
+  :root { --rose:#ff2bd6; --vert:#39ff14; --cyan:#00f0ff; --jaune:#fff01f; }
+  * { box-sizing: border-box; margin: 0; }
+  body { min-height: 100vh; background: #07000f; color: #fff; font-family: Orbitron, sans-serif; padding: 24px 16px; }
+  main { max-width: 760px; margin: auto; }
+  h1 { font-family: Monoton, cursive; font-weight: 400; font-size: clamp(2rem, 8vw, 4rem); text-align: center;
+    color: var(--rose); text-shadow: 0 0 8px var(--rose), 0 0 30px var(--rose); }
+  a { color: var(--cyan); }
+  .retour { display: block; text-align: center; margin: .5em 0 1.5em; }
+  .live { text-align: center; color: var(--vert); text-shadow: 0 0 10px var(--vert); margin-bottom: 1.5em; letter-spacing: .1em; }
+
+  #form { display: grid; gap: .6rem; padding: 1rem; border: 2px solid var(--cyan); border-radius: 16px;
+    box-shadow: 0 0 15px var(--cyan), inset 0 0 15px var(--cyan); background: rgba(0,0,0,.4); margin-bottom: 2rem; }
+  input, select, button { font: inherit; padding: .6rem; border-radius: 10px; border: 1px solid #fff4; background: #120020; color: #fff; }
+  button { cursor: pointer; border-color: var(--rose); color: var(--rose); font-weight: 800; }
+  button:disabled { opacity: .4; cursor: default; }
+  .erreur { color: var(--jaune); min-height: 1.2em; font-size: .85rem; }
+
+  /* halos fluo animés en fond (comme l'accueil) */
+  body::before, body::after { content: ""; position: fixed; width: 60vmax; height: 60vmax; border-radius: 50%;
+    filter: blur(90px); opacity: .25; z-index: -1; animation: flotte 12s ease-in-out infinite alternate; }
+  body::before { background: var(--rose); top: -20vmax; left: -20vmax; }
+  body::after  { background: var(--cyan); bottom: -20vmax; right: -20vmax; animation-delay: -6s; }
+  @keyframes flotte { to { transform: translate(15vmax, 10vmax) scale(1.2); } }
+  #form button { background: linear-gradient(90deg, var(--rose), #a020ff); color: #fff; border: 0; text-shadow: 0 0 6px #0008;
+    box-shadow: 0 0 18px var(--rose); transition: transform .15s; }
+  #form button:active { transform: scale(.96); }
+  input:focus, select:focus { outline: 2px solid var(--cyan); outline-offset: 1px; }
+
+  section { margin-bottom: 1.8rem; }
+  section.maintenant { padding: .8rem; border-radius: 18px; border: 2px solid var(--vert);
+    box-shadow: 0 0 20px #39ff1466, inset 0 0 20px #39ff1422; }
+  h2 { color: var(--jaune); text-shadow: 0 0 10px var(--jaune); font-size: 1.2rem; margin-bottom: .6rem; }
+  section.maintenant h2::after { content: " · en ce moment 🔥"; color: var(--vert); text-shadow: 0 0 10px var(--vert); }
+  ol { list-style: none; padding: 0; display: grid; gap: .6rem; }
+  li { display: flex; flex-wrap: wrap; align-items: center; gap: .6rem; padding: .7rem .8rem; border-radius: 14px;
+    background: linear-gradient(135deg, #ffffff12, #ffffff05); border: 1px solid #ffffff1a; backdrop-filter: blur(6px); }
+  li.neuf { animation: entre .5s cubic-bezier(.2, 1.4, .4, 1) both; }
+  @keyframes entre { from { opacity: 0; transform: translateY(12px) scale(.96); } }
+  .rang { font-size: 1.3rem; min-width: 1.8rem; text-align: center; }
+  .rang.n { font-size: .8rem; color: #fff8; }
+  li a { flex: 1; min-width: 0; overflow-wrap: anywhere; text-decoration: none; display: flex; align-items: center; gap: .5rem; }
+  /* mobile : titre sur toute la ligne, votes en dessous ; écran large : tout sur une ligne */
+  li a { flex: 1 1 calc(100% - 2.6rem); font-size: 1.05rem; }
+  .votes { margin-left: auto; }
+  @media (min-width: 600px) { li a { flex-basis: 0; } .votes { margin-left: 0; } }
+  .src { flex: none; font-size: .6rem; font-weight: 800; padding: .2rem .4rem; border-radius: 6px; color: #fff; }
+  .src.yt { background: #ff0033; } .src.sp { background: #1db954; color: #000; }
+  .votes { display: flex; align-items: center; gap: .2rem; padding: .15rem; border-radius: 999px; background: #0006; border: 1px solid #fff2; }
+  .votes button { border: 2px solid; font-size: 1.15rem; padding: .2rem .45rem; border-radius: 999px; opacity: .55;
+    transition: opacity .2s, background .2s, box-shadow .2s; -webkit-tap-highlight-color: transparent; }
+  .votes .haut { border-color: var(--vert); background: #39ff1418; }
+  .votes .bas { border-color: #ff3b3b; background: #ff3b3b18; }
+  .votes button.actif { opacity: 1; }
+  .votes .haut.actif { background: #39ff1455; box-shadow: 0 0 14px var(--vert); }
+  .votes .bas.actif { background: #ff3b3b55; box-shadow: 0 0 14px #ff3b3b; }
+  .votes button.boing { animation: boing .5s; }
+  @keyframes boing { 30% { transform: scale(1.4) rotate(-12deg) } 60% { transform: scale(.9) rotate(6deg) } }
+  .score { min-width: 2.2ch; text-align: center; font-weight: 800; }
+  .score.pos { color: var(--vert); text-shadow: 0 0 8px var(--vert); } .score.neg { color: #ff3b3b; text-shadow: 0 0 8px #ff3b3b; }
+  .suppr { border: 0; background: none; padding: .3rem; font-size: 1rem; opacity: .6; }
+  details { flex-basis: 100%; font-size: .85rem; }
+  summary { cursor: pointer; color: var(--cyan); list-style: none; user-select: none; }
+  summary::-webkit-details-marker { display: none; }
+  summary::before { content: "▸ "; display: inline-block; transition: transform .2s; }
+  details[open] summary::before { transform: rotate(90deg); }
+  .com { display: flex; align-items: center; gap: .4rem; padding: .4rem .7rem; margin-top: .4rem; width: fit-content; max-width: 100%;
+    background: #00f0ff1a; border: 1px solid #00f0ff44; border-radius: 4px 14px 14px 14px; }
+  .com.neuf { animation: entre .4s ease-out both; }
+  .com span { min-width: 0; overflow-wrap: anywhere; }
+  .com button { border: 0; background: none; padding: 0 .2rem; font-size: .8rem; opacity: .6; }
+  .mini { display: flex; gap: .4rem; margin-top: .5rem; }
+  .mini input { flex: 1; min-width: 0; padding: .25rem .6rem; font-size: .8rem; border-radius: 999px; }
+  .mini button { padding: .25rem .7rem; font-size: .8rem; border-radius: 999px; }
+  .vide { color: #fff8; font-size: .85rem; }
+  .exporter { display: block; margin: 2rem auto 1rem; border-color: var(--vert); color: var(--vert); box-shadow: 0 0 12px #39ff1455; }
+  .edit-son { display: grid; gap: .5rem; flex-basis: 100%; }
+  .edit-son div { display: flex; gap: .5rem; }
+  .edit-son div button { flex: 1; }
+  .outils { display: grid; gap: .5rem; margin-bottom: 1.5rem; position: sticky; top: 0; z-index: 1; padding: .6rem 0;
+    background: linear-gradient(#07000f 75%, #07000f00); }
+  .puces { display: flex; gap: .4rem; overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+  .puces::-webkit-scrollbar { display: none; }
+  .puces button { flex: none; padding: .35rem .75rem; font-size: .75rem; border-radius: 999px; border-color: #fff3; color: #fffc; font-weight: 500; transition: all .2s; }
+  .puces button.on { background: var(--cyan); border-color: var(--cyan); color: #07000f; font-weight: 800; box-shadow: 0 0 12px var(--cyan); }
+  #tris button.on { background: var(--jaune); border-color: var(--jaune); box-shadow: 0 0 12px var(--jaune); }
+  .confetti { position: fixed; width: 8px; height: 14px; border-radius: 2px; pointer-events: none; z-index: 2;
+    box-shadow: 0 0 6px currentColor; animation: vole 1s ease-out forwards; }
+  @keyframes vole { to { transform: translate(var(--x), var(--y)) rotate(var(--r)); opacity: 0; } }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+</style>
+</head>
+<body>
+<main>
+  <h1>Playlist</h1>
+  <a class="retour" href="/">← compte à rebours</a>
+  <p class="live" id="live"></p>
+
+  <form id="form">
+    <input id="url" type="url" placeholder="Lien Spotify (Partager → Copier le lien)" required>
+    <input id="titre" placeholder="Artiste – Titre" maxlength="120" required>
+    <select id="decennie" required></select>
+    <button>Proposer 🎶</button>
+    <p class="erreur" id="erreur" role="alert"></p>
+  </form>
+
+  <div class="outils">
+    <div class="puces" id="filtres" role="group" aria-label="Filtrer par décennie"></div>
+    <div class="puces" id="tris" role="group" aria-label="Trier"></div>
+  </div>
+  <div id="listes"></div>
+  <button type="button" id="exporter" class="exporter">📥 Exporter en Excel</button>
+</main>
+
+<script src="/__/firebase/10.14.1/firebase-app-compat.js"></script>
+<script src="/__/firebase/10.14.1/firebase-database-compat.js"></script>
+<script src="/__/firebase/init.js"></script>
+<script>
+  // éléments explicites : l'accès global par id casse si un script définit une variable du même nom
+  const [form, live, listes, erreur, decennie, filtres, tris] = ['form', 'live', 'listes', 'erreur', 'decennie', 'filtres', 'tris'].map(id => document.getElementById(id));
+  const DECENNIES = [1950, 1960, 1970, 1980, 1990, 2000, 2010, 2020, 2027]; // 2027 = « Pré 2027 », dernier créneau avant minuit
+  // Une décennie toutes les 30 min à partir de DEBUT, dans l'ordre ci-dessus, puis on reboucle
+  const DEBUT = new Date('2026-12-31T19:30'); // 9 créneaux × 30 min → « Pré 2027 » de 23h30 à minuit
+  const nom = d => d === 2027 ? 'Pré 2027' : d < 2000 ? `Années ${String(d).slice(2)}` : `Années ${d}`;
+  const LIEN_OK = /^https:\/\/open\.spotify\.com\/(intl-[a-z]{2}(-[a-z]{2})?\/)?(track|album|playlist|artist|episode|show)\/[A-Za-z0-9]{22}(\?.*)?$/; // garder identique à database.rules.json
+  // Vérifie le lien : format strict, puis existence chez Spotify (oEmbed, CORS ouvert). Renvoie un message d'erreur ou ''.
+  async function lienInvalide(u) {
+    if (!LIEN_OK.test(u)) return 'Lien Spotify invalide : dans Spotify, fais Partager → Copier le lien.';
+    const oembed = l => fetch('https://open.spotify.com/oembed?url=' + encodeURIComponent(l)).then(r => r.ok);
+    // les 404 de Spotify n'ont pas d'en-tête CORS → fetch lève une erreur ; on sonde un lien connu pour distinguer « lien faux » de « Spotify injoignable »
+    if (await oembed(u).catch(() => false)) return '';
+    const spotifyRepond = await oembed('https://open.spotify.com/track/4CWcaGtaOyAqBDKIeZMUe0').catch(() => false);
+    return spotifyRepond ? "Ce lien Spotify n'existe pas." : ''; // ponytail: Spotify injoignable → on se contente du format plutôt que de bloquer la soirée
+  }
+
+  decennie.innerHTML = '<option value="">Décennie…</option>' + DECENNIES.map(d => `<option value="${d}">${nom(d)}</option>`).join('');
+
+  const songs = firebase.database().ref('songs');
+  const coms = firebase.database().ref('commentaires');
+  // id -> 1 | -1 ; reprend les anciens votes (tableau d'ids = votes ▲)
+  const votes = JSON.parse(localStorage.getItem('mesVotes') || 'null') || Object.fromEntries(JSON.parse(localStorage.getItem('votes') || '[]').map(id => [id, 1])); // ponytail: anti-double-vote local seulement, contournable en navigation privée
+  const miens = JSON.parse(localStorage.getItem('miens') || '{}'); // id -> clé secrète de suppression
+  const mesComs = JSON.parse(localStorage.getItem('mesComs') || '{}'); // id commentaire -> clé secrète de suppression
+  const db = firebase.database();
+  const TRIS = { top: ['🔥 Top', (a, b) => b.votes - a.votes], flop: ['🧊 Flop', (a, b) => a.votes - b.votes],
+    az: ['🔤 A→Z', (a, b) => a.titre.localeCompare(b.titre, 'fr', { sensitivity: 'base' })] };
+  const prefs = (() => { try { return JSON.parse(localStorage.getItem('prefs')) || {}; } catch { return {}; } })();
+  let filtre = prefs.filtre ?? 'tout', tri = TRIS[prefs.tri] ? prefs.tri : 'top';
+  const choisir = (f, t) => { filtre = f; tri = t; localStorage.setItem('prefs', JSON.stringify({ filtre, tri })); rendu(); };
+  let edition = null, editionSon = null; // id du commentaire en cours de modification
+  const fermes = new Set(), brouillons = {}, vus = new Set(); // vus : n'animer que les nouveautés // survivent au re-rendu temps réel
+  let data = {}, commentaires = {};
+
+  function enCours() {
+    const t = Date.now() - DEBUT;
+    return t < 0 ? null : DECENNIES[Math.floor(t / 1800000) % DECENNIES.length];
+  }
+
+  function el(tag, props = {}, ...enfants) {
+    const e = Object.assign(document.createElement(tag), props);
+    e.append(...enfants);
+    return e;
+  }
+
+  const couleurs = ['#ff2bd6', '#39ff14', '#00f0ff', '#fff01f'];
+  function boum(x, y, n = 30) {
+    for (let i = 0; i < n; i++) {
+      const p = el('i', { className: 'confetti' }), angle = Math.random() * Math.PI * 2, dist = 40 + Math.random() * 120;
+      p.style.cssText = `left:${x}px;top:${y}px;background:${couleurs[i % 4]};color:${couleurs[i % 4]};` +
+        `--x:${Math.cos(angle) * dist}px;--y:${Math.sin(angle) * dist}px;--r:${Math.random() * 720}deg`;
+      document.body.append(p);
+      setTimeout(() => p.remove(), 1000);
+    }
+  }
+
+  function voter(id, sens, e) {
+    const avant = votes[id] || 0, apres = avant === sens ? 0 : sens; // re-cliquer annule, l'autre flèche bascule
+    songs.child(id).child('votes').set(firebase.database.ServerValue.increment(apres - avant));
+    if (apres) votes[id] = apres; else delete votes[id];
+    localStorage.setItem('mesVotes', JSON.stringify(votes));
+    rendu();
+    listes.querySelector(`li[data-id="${id}"] .${sens > 0 ? 'haut' : 'bas'}`)?.classList.add('boing');
+    if (apres === 1) boum(e.clientX, e.clientY, 20);
+  }
+
+  // preuve à usage unique : posée avec la modif, effacée juste après (sinon n'importe qui pourrait la réutiliser)
+  const prouve = (chemin, cle, changes) => {
+    const ref = db.ref(chemin);
+    return ref.remove().then(() => db.ref().update({ [chemin]: cle, ...changes })).finally(() => ref.remove());
+  };
+
+  function blocCommentaires(id) {
+    const liste = Object.entries(commentaires[id] || {}).sort(([, a], [, b]) => a.t - b.t);
+    const d = el('details', { open: !fermes.has(id), ontoggle: () => d.open ? fermes.delete(id) : fermes.add(id) },
+      el('summary', { textContent: liste.length ? `💬 ${liste.length} commentaire${liste.length > 1 ? 's' : ''}` : '💬 Commenter' }),
+      ...liste.map(([cid, c]) => {
+        const neuf = !vus.has(cid); vus.add(cid);
+        if (edition === cid) {
+          const champ = el('input', { maxLength: 200, required: true, value: brouillons['e' + cid] ?? c.texte, oninput: () => brouillons['e' + cid] = champ.value });
+          return el('form', { className: 'mini', onsubmit: e => {
+            e.preventDefault();
+            const texte = champ.value.trim();
+            if (!texte) return;
+            edition = null; delete brouillons['e' + cid];
+            prouve(`preuvesComs/${id}/${cid}`, mesComs[cid], { [`commentaires/${id}/${cid}/texte`]: texte })
+              .catch(() => alert('Oups, modification refusée.'));
+            rendu();
+          } }, champ, el('button', { textContent: '✓', title: 'Enregistrer' }),
+            el('button', { type: 'button', textContent: '✕', title: 'Annuler', onclick: () => { edition = null; delete brouillons['e' + cid]; rendu(); } }));
+        }
+        const p = el('p', { className: neuf ? 'com neuf' : 'com' }, el('span', { textContent: c.texte }));
+        if (mesComs[cid]) {
+          const ed = el('button', { textContent: '✏️', title: 'Modifier mon commentaire', onclick: () => { edition = cid; rendu(); listes.querySelector(`li[data-id="${id}"] .mini input`)?.focus(); } });
+          ed.setAttribute('aria-label', 'Modifier mon commentaire');
+          p.append(ed);
+        }
+        if (mesComs[cid]) {
+          const x = el('button', { textContent: '🗑️', title: 'Supprimer mon commentaire', onclick: () => confirm('Supprimer ton commentaire ?') &&
+            prouve(`preuvesComs/${id}/${cid}`, mesComs[cid], { [`commentaires/${id}/${cid}`]: null })
+              .then(() => { delete mesComs[cid]; localStorage.setItem('mesComs', JSON.stringify(mesComs)); }) });
+          x.setAttribute('aria-label', 'Supprimer mon commentaire');
+          p.append(x);
+        }
+        return p;
+      }));
+    const champ = el('input', { placeholder: 'Ton commentaire…', maxLength: 200, required: true, value: brouillons[id] || '',
+      oninput: () => brouillons[id] = champ.value });
+    const f = el('form', { className: 'mini', onsubmit: e => {
+      e.preventDefault();
+      const texte = champ.value.trim();
+      if (!texte) return;
+      delete brouillons[id];
+      const cid = coms.child(id).push().key, cle = crypto.randomUUID();
+      mesComs[cid] = cle; localStorage.setItem('mesComs', JSON.stringify(mesComs)); // avant l'écho temps réel, pour afficher 🗑️ direct
+      db.ref().update({ [`commentaires/${id}/${cid}`]: { texte, t: firebase.database.ServerValue.TIMESTAMP }, [`secretsComs/${id}/${cid}`]: cle })
+        .catch(() => { delete mesComs[cid]; localStorage.setItem('mesComs', JSON.stringify(mesComs)); alert('Oups, commentaire refusé.'); });
+      boum(e.submitter?.getBoundingClientRect().x ?? 0, e.submitter?.getBoundingClientRect().y ?? 0, 12);
+    } }, champ, el('button', { textContent: 'Envoyer' }));
+    d.append(f);
+    return d;
+  }
+
+  function rendu() {
+    const actuelle = enCours();
+    live.textContent = actuelle ? `En ce moment : ${nom(actuelle)}` : '';
+    const compte = d => Object.values(data).filter(x => x.decennie === d).length;
+    filtres.replaceChildren(...['tout', ...DECENNIES].map(d => el('button', { type: 'button', className: filtre === d ? 'on' : '',
+      textContent: d === 'tout' ? `Tout (${Object.keys(data).length})` : `${nom(d).replace('Années ', '')} (${compte(d)})`, onclick: () => choisir(d, tri) })));
+    tris.replaceChildren(...Object.entries(TRIS).map(([k, [lib]]) => el('button', { type: 'button', className: tri === k ? 'on' : '', textContent: lib, onclick: () => choisir(filtre, k) })));
+    const ordre = filtre !== 'tout' ? [filtre] : actuelle ? [actuelle, ...DECENNIES.filter(d => d !== actuelle)] : DECENNIES;
+    const focus = document.activeElement?.closest('li')?.dataset.id; // garde le clavier ouvert sur mobile si ça bouge pendant la frappe
+    listes.replaceChildren(...ordre.map(d => {
+      const s = el('section');
+      s.classList.toggle('maintenant', d === actuelle);
+      const h = el('h2', { textContent: nom(d) });
+      const items = Object.entries(data).filter(([, x]) => x.decennie === d).sort(([, a], [, b]) => TRIS[tri][1](a, b));
+      if (!items.length) { s.append(h, el('p', { className: 'vide', textContent: 'Rien encore, propose un son !' })); return s; }
+      s.append(h, el('ol', {}, ...items.map(([id, x], i) => {
+        const li = el('li', { className: vus.has(id) ? '' : 'neuf' });
+        vus.add(id);
+        li.dataset.id = id;
+        if (editionSon === id) {
+          const b = brouillons['s' + id] ??= { titre: x.titre, url: x.url, decennie: x.decennie };
+          const t = el('input', { maxLength: 120, required: true, value: b.titre, oninput: () => b.titre = t.value });
+          const lien = el('input', { type: 'url', required: true, maxLength: 300, placeholder: 'Lien Spotify', value: b.url, oninput: () => b.url = lien.value });
+          const err = el('p', { className: 'erreur', role: 'alert', textContent: b.err || '' });
+          const sel = el('select', { required: true, onchange: () => b.decennie = +sel.value },
+            ...DECENNIES.map(d => el('option', { value: d, textContent: nom(d), selected: d === b.decennie })));
+          const fin = () => { editionSon = null; delete brouillons['s' + id]; rendu(); };
+          li.append(el('form', { className: 'edit-son', onsubmit: async e => {
+            e.preventDefault();
+            const titre = t.value.trim(), url = lien.value.trim();
+            if (!titre) return;
+            err.textContent = 'Vérification du lien…';
+            b.err = url === x.url ? '' : await lienInvalide(url); // lien inchangé : pas besoin de revérifier
+            if (b.err) { rendu(); return; }
+            prouve(`preuves/${id}`, miens[id], { [`songs/${id}/titre`]: titre, [`songs/${id}/decennie`]: +sel.value, ...(url !== x.url && { [`songs/${id}/url`]: url }) })
+              .catch(() => alert('Oups, modification refusée.'));
+            fin();
+          } }, lien, t, sel, err, el('div', {}, el('button', { textContent: '✓ Enregistrer' }), el('button', { type: 'button', textContent: 'Annuler', onclick: fin }))));
+          return li;
+        }
+        const haut = el('button', { textContent: '👍', title: "J'aime", className: 'haut' + (votes[id] === 1 ? ' actif' : ''), onclick: e => voter(id, 1, e) });
+        const bas = el('button', { textContent: '👎', title: "J'aime pas", className: 'bas' + (votes[id] === -1 ? ' actif' : ''), onclick: e => voter(id, -1, e) });
+        haut.setAttribute('aria-label', `J'aime ${x.titre}`);
+        bas.setAttribute('aria-label', `J'aime pas ${x.titre}`);
+        const sp = x.url.includes('spotify');
+        const medaille = tri === 'top' && i < 3 && x.votes > 0;
+        if (tri === 'top') li.append(el('span', { className: medaille ? 'rang' : 'rang n', textContent: medaille ? ['🥇', '🥈', '🥉'][i] : `#${i + 1}` }));
+        li.append(el('a', { href: x.url, target: '_blank', rel: 'noopener' }, el('span', { className: sp ? 'src sp' : 'src yt', textContent: sp ? '▶ Spotify' : '▶ YouTube' }), x.titre),
+          el('span', { className: 'votes' }, haut, el('span', { className: 'score' + (x.votes > 0 ? ' pos' : x.votes < 0 ? ' neg' : ''), textContent: x.votes }), bas));
+        if (miens[id]) {
+          const ed = el('button', { textContent: '✏️', className: 'suppr', title: 'Modifier mon son', onclick: () => { editionSon = id; rendu(); listes.querySelector(`li[data-id="${id}"] input`)?.focus(); } });
+          ed.setAttribute('aria-label', `Modifier ${x.titre}`);
+          li.append(ed);
+          const x2 = el('button', { textContent: '🗑️', className: 'suppr', title: 'Supprimer mon son', onclick: () => confirm(`Supprimer « ${x.titre} » ?`) &&
+            prouve(`preuves/${id}`, miens[id], { [`songs/${id}`]: null, [`commentaires/${id}`]: null })
+              .then(() => { delete miens[id]; localStorage.setItem('miens', JSON.stringify(miens)); }) });
+          x2.setAttribute('aria-label', `Supprimer ${x.titre}`);
+          li.append(x2);
+        }
+        li.append(blocCommentaires(id));
+        return li;
+      })));
+      return s;
+    }));
+    if (focus) listes.querySelector(`li[data-id="${focus}"] :is(.edit-son, .mini) input`)?.focus();
+  }
+
+  songs.on('value', snap => { data = snap.val() || {}; rendu(); });
+  coms.on('value', snap => { commentaires = snap.val() || {}; rendu(); });
+  // CSV « ; » + BOM : Excel (FR) l'ouvre direct avec les accents
+  document.getElementById('exporter').onclick = () => {
+    const cell = v => { v = String(v); if (/^[=+\-@]/.test(v)) v = "'" + v; return '"' + v.replace(/"/g, '""') + '"'; }; // ' devant = + - @ : pas de formule injectée
+    const lignes = Object.entries(data).sort(([, a], [, b]) => a.decennie - b.decennie || b.votes - a.votes)
+      .map(([id, x]) => [nom(x.decennie), x.titre, x.url, x.votes, Object.values(commentaires[id] || {}).map(c => c.texte).join(' | ')].map(cell).join(';'));
+    const csv = '\ufeff' + ['Décennie;Titre;Lien Spotify;Score;Commentaires', ...lignes].join('\r\n');
+    const a = el('a', { href: URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' })), download: 'playlist-31driesembre.csv' });
+    a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  };
+  setInterval(rendu, 60000); // change de décennie à l'heure pile / la demie
+
+  // lien collé → titre du morceau rempli (oEmbed ne donne pas l'artiste) ; on n'écrase pas ce que la personne a tapé
+  form.elements.url.addEventListener('input', async () => {
+    const u = form.elements.url.value.trim(), t = form.elements.titre;
+    if (!LIEN_OK.test(u) || (t.value && t.value !== t.dataset.auto)) return;
+    try {
+      const { title } = await (await fetch('https://open.spotify.com/oembed?url=' + encodeURIComponent(u))).json();
+      if (title && (!t.value || t.value === t.dataset.auto) && form.elements.url.value.trim() === u) {
+        t.value = t.dataset.auto = title.slice(0, 120);
+        t.focus(); t.setSelectionRange(0, 0); // curseur au début pour taper « Artiste – »
+      }
+    } catch {}
+  });
+
+  form.onsubmit = async e => {
+    e.preventDefault();
+    const u = form.elements.url.value.trim();
+    erreur.textContent = 'Vérification du lien…';
+    const pb = await lienInvalide(u);
+    if (pb) { erreur.textContent = pb; return; }
+    const id = songs.push().key, cle = crypto.randomUUID();
+    db.ref().update({ [`songs/${id}`]: { titre: form.elements.titre.value.trim(), url: u, decennie: +form.elements.decennie.value, votes: 0 }, [`secrets/${id}`]: cle })
+      .then(() => { miens[id] = cle; localStorage.setItem('miens', JSON.stringify(miens)); form.reset(); delete form.elements.titre.dataset.auto; erreur.textContent = ''; rendu();
+        const r = e.submitter?.getBoundingClientRect(); if (r) boum(r.x + r.width / 2, r.y, 40);
+        listes.querySelector(`li[data-id="${id}"]`)?.scrollIntoView({ behavior: 'smooth', block: 'center' }); })
+      .catch(() => { erreur.textContent = 'Oups, envoi refusé.'; });
+  };
+</script>
+</body>
+</html>
