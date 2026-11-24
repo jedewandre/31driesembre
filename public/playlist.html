@@ -18,7 +18,7 @@
   .retour { display: block; text-align: center; margin: .5em 0 1.5em; }
   .live { text-align: center; color: var(--vert); text-shadow: 0 0 10px var(--vert); margin-bottom: 1.5em; letter-spacing: .1em; }
 
-  #form { display: grid; gap: .6rem; padding: 1rem; border: 2px solid var(--cyan); border-radius: 16px;
+  #form { display: grid; grid-template-columns: minmax(0, 1fr); gap: .6rem; padding: 1rem; border: 2px solid var(--cyan); border-radius: 16px;
     box-shadow: 0 0 15px var(--cyan), inset 0 0 15px var(--cyan); background: rgba(0,0,0,.4); margin-bottom: 2rem; }
   input, select, button { font: inherit; padding: .6rem; border-radius: 10px; border: 1px solid #fff4; background: #120020; color: #fff; }
   button { cursor: pointer; border-color: var(--rose); color: var(--rose); font-weight: 800; }
@@ -50,7 +50,7 @@
   .rang.n { font-size: .8rem; color: #fff8; }
   li a { flex: 1; min-width: 0; overflow-wrap: anywhere; text-decoration: none; display: flex; align-items: center; gap: .5rem; }
   /* mobile : titre sur toute la ligne, votes en dessous ; écran large : tout sur une ligne */
-  li a { flex: 1 1 calc(100% - 2.6rem); font-size: 1.05rem; }
+  li a { flex: 1 1 calc(100% - 2.6rem); font-size: 1.05rem; flex-direction: column; align-items: flex-start; gap: .25rem; }
   .votes { margin-left: auto; }
   @media (min-width: 600px) { li a { flex-basis: 0; } .votes { margin-left: 0; } }
   .src { flex: none; font-size: .6rem; font-weight: 800; padding: .2rem .4rem; border-radius: 6px; color: #fff; }
@@ -82,6 +82,11 @@
   .mini input { flex: 1; min-width: 0; padding: .25rem .6rem; font-size: .8rem; border-radius: 999px; }
   .mini button { padding: .25rem .7rem; font-size: .8rem; border-radius: 999px; }
   .vide { color: #fff8; font-size: .85rem; }
+  .chercher { display: block; text-align: center; padding: .6rem; border-radius: 10px; background: #1db954; color: #000; font-weight: 800; text-decoration: none; }
+  .aide { font-size: .7rem; color: #fffa; text-align: center; margin-top: -.2rem; }
+  .ligne-lien { display: flex; gap: .4rem; }
+  .ligne-lien input { flex: 1; min-width: 0; }
+  #form #coller { flex: none; background: #120020; border: 1px solid var(--cyan); color: var(--cyan); box-shadow: none; text-shadow: none; }
   .exporter { display: block; margin: 2rem auto 1rem; border-color: var(--vert); color: var(--vert); box-shadow: 0 0 12px #39ff1455; }
   .edit-son { display: grid; gap: .5rem; flex-basis: 100%; }
   .edit-son div { display: flex; gap: .5rem; }
@@ -106,7 +111,12 @@
   <p class="live" id="live"></p>
 
   <form id="form">
-    <input id="url" type="url" placeholder="Lien Spotify (Partager → Copier le lien)" required>
+    <a id="chercher" class="chercher" href="https://open.spotify.com/search" target="_blank" rel="noopener">🔍 Chercher sur Spotify</a>
+    <p class="aide">Dans Spotify : ⋯ → Partager → Copier le lien, puis reviens ici et colle.</p>
+    <div class="ligne-lien">
+      <input id="url" type="url" placeholder="Lien Spotify" required>
+      <button type="button" id="coller">📋 Coller</button>
+    </div>
     <input id="titre" placeholder="Artiste – Titre" maxlength="120" required>
     <select id="decennie" required></select>
     <button>Proposer 🎶</button>
@@ -347,6 +357,22 @@
       }
     } catch {}
   });
+
+  // 🔍 ouvre la recherche Spotify (l'appli sur tél) avec ce qui est déjà tapé
+  const chercher = document.getElementById('chercher');
+  chercher.onclick = () => {
+    const u = form.elements.url.value.trim(), q = form.elements.titre.value.trim() || (u.startsWith('http') ? '' : u);
+    chercher.href = 'https://open.spotify.com/search' + (q ? '/' + encodeURIComponent(q) : '');
+  };
+  // 📋 colle le presse-papier en un tap, puis déclenche le remplissage auto du titre
+  document.getElementById('coller').onclick = async () => {
+    const champ = form.elements.url;
+    try {
+      champ.value = (await navigator.clipboard.readText()).trim();
+      champ.dispatchEvent(new Event('input'));
+      erreur.textContent = LIEN_OK.test(champ.value) ? '' : "Ce n'est pas un lien Spotify : dans Spotify, fais Partager → Copier le lien.";
+    } catch { champ.focus(); } // presse-papier refusé : on met juste le curseur dans le champ
+  };
 
   form.onsubmit = async e => {
     e.preventDefault();
