@@ -132,9 +132,15 @@
   const DEBUT = new Date('2026-12-31T19:30'); // 9 créneaux × 30 min → « Pré 2027 » de 23h30 à minuit
   const nom = d => d === 2027 ? 'Pré 2027' : d < 2000 ? `Années ${String(d).slice(2)}` : `Années ${d}`;
   const LIEN_OK = /^https:\/\/open\.spotify\.com\/(intl-[a-z]{2}(-[a-z]{2})?\/)?(track|album|playlist|artist|episode|show)\/[A-Za-z0-9]{22}(\?.*)?$/; // garder identique à database.rules.json
+  // même morceau = même type + id, peu importe intl-xx ou ?si=…
+  const cleLien = u => u.match(/(track|album|playlist|artist|episode|show)\/([A-Za-z0-9]{22})/)?.slice(1).join(':');
+  // ponytail: doublon vérifié côté page seulement ; un index liens/$cle dans les règles si quelqu'un force
+  const doublon = (u, sauf) => Object.entries(data).find(([id, x]) => id !== sauf && cleLien(x.url) === cleLien(u))?.[1];
   // Vérifie le lien : format strict, puis existence chez Spotify (oEmbed, CORS ouvert). Renvoie un message d'erreur ou ''.
-  async function lienInvalide(u) {
+  async function lienInvalide(u, sauf) {
     if (!LIEN_OK.test(u)) return 'Lien Spotify invalide : dans Spotify, fais Partager → Copier le lien.';
+    const deja = doublon(u, sauf);
+    if (deja) return `Déjà proposé : « ${deja.titre} » (${nom(deja.decennie)}). Va plutôt lui mettre un 👍 !`;
     const oembed = l => fetch('https://open.spotify.com/oembed?url=' + encodeURIComponent(l)).then(r => r.ok);
     // les 404 de Spotify n'ont pas d'en-tête CORS → fetch lève une erreur ; on sonde un lien connu pour distinguer « lien faux » de « Spotify injoignable »
     if (await oembed(u).catch(() => false)) return '';
@@ -157,7 +163,7 @@
   let filtre = prefs.filtre ?? 'tout', tri = TRIS[prefs.tri] ? prefs.tri : 'top';
   const choisir = (f, t) => { filtre = f; tri = t; localStorage.setItem('prefs', JSON.stringify({ filtre, tri })); rendu(); };
   let edition = null, editionSon = null; // id du commentaire en cours de modification
-  const fermes = new Set(), brouillons = {}, vus = new Set(); // vus : n'animer que les nouveautés // survivent au re-rendu temps réel
+  const ouverts = new Set(), brouillons = {}, vus = new Set(); // vus : n'animer que les nouveautés // survivent au re-rendu temps réel
   let data = {}, commentaires = {};
 
   function enCours() {
@@ -200,7 +206,7 @@
 
   function blocCommentaires(id) {
     const liste = Object.entries(commentaires[id] || {}).sort(([, a], [, b]) => a.t - b.t);
-    const d = el('details', { open: !fermes.has(id), ontoggle: () => d.open ? fermes.delete(id) : fermes.add(id) },
+    const d = el('details', { open: ouverts.has(id), ontoggle: () => d.open ? ouverts.add(id) : ouverts.delete(id) },
       el('summary', { textContent: liste.length ? `💬 ${liste.length} commentaire${liste.length > 1 ? 's' : ''}` : '💬 Commenter' }),
       ...liste.map(([cid, c]) => {
         const neuf = !vus.has(cid); vus.add(cid);
@@ -281,7 +287,7 @@
             const titre = t.value.trim(), url = lien.value.trim();
             if (!titre) return;
             err.textContent = 'Vérification du lien…';
-            b.err = url === x.url ? '' : await lienInvalide(url); // lien inchangé : pas besoin de revérifier
+            b.err = url === x.url ? '' : await lienInvalide(url, id); // lien inchangé : pas besoin de revérifier
             if (b.err) { rendu(); return; }
             prouve(`preuves/${id}`, miens[id], { [`songs/${id}/titre`]: titre, [`songs/${id}/decennie`]: +sel.value, ...(url !== x.url && { [`songs/${id}/url`]: url }) })
               .catch(() => alert('Oups, modification refusée.'));
