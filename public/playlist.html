@@ -41,46 +41,49 @@
     box-shadow: 0 0 20px #39ff1466, inset 0 0 20px #39ff1422; }
   h2 { color: var(--jaune); text-shadow: 0 0 10px var(--jaune); font-size: 1.2rem; margin-bottom: .6rem; }
   section.maintenant h2::after { content: " · en ce moment 🔥"; color: var(--vert); text-shadow: 0 0 10px var(--vert); }
-  ol { list-style: none; padding: 0; display: grid; gap: .6rem; }
-  li { display: flex; flex-wrap: wrap; align-items: center; gap: .6rem; padding: .7rem .8rem; border-radius: 14px;
-    background: linear-gradient(135deg, #ffffff12, #ffffff05); border: 1px solid #ffffff1a; backdrop-filter: blur(6px); }
+  /* cartes façon publication Facebook */
+  ol { list-style: none; padding: 0; display: grid; gap: .8rem; }
+  li { background: #18121fee; border: 1px solid #ffffff14; border-radius: 10px; padding: 12px 14px 4px;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; font-size: 15px; color: #e4e6eb; }
   li.neuf { animation: entre .5s cubic-bezier(.2, 1.4, .4, 1) both; }
   @keyframes entre { from { opacity: 0; transform: translateY(12px) scale(.96); } }
-  .rang { font-size: 1.3rem; min-width: 1.8rem; text-align: center; }
-  .rang.n { font-size: .8rem; color: #fff8; }
-  li a { flex: 1; min-width: 0; overflow-wrap: anywhere; text-decoration: none; display: flex; align-items: center; gap: .5rem; }
-  /* mobile : titre sur toute la ligne, votes en dessous ; écran large : tout sur une ligne */
-  li a { flex: 1 1 calc(100% - 2.6rem); font-size: 1.05rem; flex-direction: column; align-items: flex-start; gap: .25rem; }
-  .votes { margin-left: auto; }
-  @media (min-width: 600px) { li a { flex-basis: 0; } .votes { margin-left: 0; } }
-  .src { flex: none; font-size: .6rem; font-weight: 800; padding: .2rem .4rem; border-radius: 6px; color: #fff; }
-  .src.yt { background: #ff0033; } .src.sp { background: #1db954; color: #000; }
-  .votes { display: flex; align-items: center; gap: .2rem; padding: .15rem; border-radius: 999px; background: #0006; border: 1px solid #fff2; }
-  .votes button { border: 2px solid; font-size: 1.15rem; padding: .2rem .45rem; border-radius: 999px; opacity: .55;
-    transition: opacity .2s, background .2s, box-shadow .2s; -webkit-tap-highlight-color: transparent; }
-  .votes .haut { border-color: var(--vert); background: #39ff1418; }
-  .votes .bas { border-color: #ff3b3b; background: #ff3b3b18; }
-  .votes button.actif { opacity: 1; }
-  .votes .haut.actif { background: #39ff1455; box-shadow: 0 0 14px var(--vert); }
-  .votes .bas.actif { background: #ff3b3b55; box-shadow: 0 0 14px #ff3b3b; }
-  .votes button.boing { animation: boing .5s; }
-  @keyframes boing { 30% { transform: scale(1.4) rotate(-12deg) } 60% { transform: scale(.9) rotate(6deg) } }
-  .score { min-width: 2.2ch; text-align: center; font-weight: 800; }
-  .score.pos { color: var(--vert); text-shadow: 0 0 8px var(--vert); } .score.neg { color: #ff3b3b; text-shadow: 0 0 8px #ff3b3b; }
-  .suppr { border: 0; background: none; padding: .3rem; font-size: 1rem; opacity: .6; }
-  details { flex-basis: 100%; font-size: .85rem; }
-  summary { cursor: pointer; color: var(--cyan); list-style: none; user-select: none; }
-  summary::-webkit-details-marker { display: none; }
-  summary::before { content: "▸ "; display: inline-block; transition: transform .2s; }
-  details[open] summary::before { transform: rotate(90deg); }
-  .com { display: flex; align-items: center; gap: .4rem; padding: .4rem .7rem; margin-top: .4rem; width: fit-content; max-width: 100%;
-    background: #00f0ff1a; border: 1px solid #00f0ff44; border-radius: 4px 14px 14px 14px; }
+  li button { font-family: inherit; }
+  .tete { display: flex; align-items: center; gap: 10px; }
+  .rang { flex: none; width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; font-size: 1.3rem;
+    background: linear-gradient(135deg, var(--rose), #a020ff); }
+  .rang.n { font-size: 13px; font-weight: 700; color: #fff; }
+  .qui { flex: 1; min-width: 0; display: grid; gap: 2px; }
+  .titre { color: #e4e6eb; font-weight: 600; text-decoration: none; overflow-wrap: anywhere; line-height: 1.25; }
+  .titre:hover { text-decoration: underline; }
+  .meta { font-size: 13px; color: #b0b3b8; }
+  .meta b { color: #1db954; font-weight: 600; }
+  .proprio { flex: none; display: flex; }
+  .proprio button { border: 0; background: none; padding: 6px; font-size: 15px; border-radius: 50%; color: #b0b3b8; }
+  .proprio button:hover { background: #ffffff14; }
+  .stats { display: flex; justify-content: space-between; align-items: center; min-height: 20px; padding: 10px 0 8px;
+    font-size: 14px; color: #b0b3b8; border-bottom: 1px solid #ffffff1f; }
+  .stats .pos { color: var(--vert); font-weight: 600; } .stats .neg { color: #ff5a5a; font-weight: 600; }
+  .stats button { border: 0; background: none; padding: 0; color: #b0b3b8; font-size: 14px; font-weight: 400; }
+  .stats button:hover { text-decoration: underline; }
+  .actions { display: flex; padding: 2px 0; }
+  .actions button { flex: 1; border: 0; background: none; color: #b0b3b8; font-size: 14px; font-weight: 600; padding: 8px 2px;
+    border-radius: 6px; white-space: nowrap; -webkit-tap-highlight-color: transparent; transition: background .15s; }
+  .actions button:hover, .actions button:active { background: #ffffff14; }
+  .actions .haut.actif { color: var(--vert); } .actions .bas.actif { color: #ff5a5a; }
+  .actions button.boing { animation: boing .5s; }
+  @keyframes boing { 30% { transform: scale(1.15) } 60% { transform: scale(.95) } }
+  .coms { border-top: 1px solid #ffffff1f; padding: 8px 0 6px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px; }
+  .com { display: flex; gap: 8px; align-items: flex-start; }
   .com.neuf { animation: entre .4s ease-out both; }
-  .com span { min-width: 0; overflow-wrap: anywhere; }
-  .com button { border: 0; background: none; padding: 0 .2rem; font-size: .8rem; opacity: .6; }
-  .mini { display: flex; gap: .4rem; margin-top: .5rem; }
-  .mini input { flex: 1; min-width: 0; padding: .25rem .6rem; font-size: .8rem; border-radius: 999px; }
-  .mini button { padding: .25rem .7rem; font-size: .8rem; border-radius: 999px; }
+  .avatar { flex: none; width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; font-size: 16px; background: #3a3b3c; }
+  .bulle { min-width: 0; }
+  .bulle p { background: #3a3b3c; border-radius: 18px; padding: 8px 12px; overflow-wrap: anywhere; width: fit-content; max-width: 100%; }
+  .liens-com { display: flex; gap: 12px; padding: 3px 12px 0; }
+  .liens-com button { border: 0; background: none; padding: 0; font-size: 12px; font-weight: 700; color: #b0b3b8; }
+  .mini { display: flex; gap: 6px; align-items: center; }
+  .mini input { flex: 1; min-width: 0; background: #3a3b3c; border: 0; border-radius: 18px; padding: 8px 14px; font: 15px system-ui, sans-serif; color: #e4e6eb; }
+  .mini button { flex: none; border: 0; background: none; color: var(--cyan); font-size: 18px; padding: 4px 8px; }
+  .mini button.txt { font-size: 13px; font-weight: 700; color: #b0b3b8; padding: 4px; }
   .vide { color: #fff8; font-size: .85rem; }
   .chercher { display: block; text-align: center; padding: .6rem; border-radius: 10px; background: #1db954; color: #000; font-weight: 800; text-decoration: none; }
   .aide { font-size: .7rem; color: #fffa; text-align: center; margin-top: -.2rem; }
@@ -214,56 +217,59 @@
     return ref.remove().then(() => db.ref().update({ [chemin]: cle, ...changes })).finally(() => ref.remove());
   };
 
+  const AVATARS = ['🦊', '🐸', '🐼', '🦄', '🐙', '🐧', '🦁', '🐵', '🐨', '🦖', '🐯', '🐷'];
+  const avatar = cid => AVATARS[[...cid].reduce((h, c) => h + c.charCodeAt(0), 0) % AVATARS.length]; // même emoji pour un même commentaire
+
   function blocCommentaires(id) {
+    if (!ouverts.has(id)) return '';
     const liste = Object.entries(commentaires[id] || {}).sort(([, a], [, b]) => a.t - b.t);
-    const d = el('details', { open: ouverts.has(id), ontoggle: () => d.open ? ouverts.add(id) : ouverts.delete(id) },
-      el('summary', { textContent: liste.length ? `💬 ${liste.length} commentaire${liste.length > 1 ? 's' : ''}` : '💬 Commenter' }),
-      ...liste.map(([cid, c]) => {
-        const neuf = !vus.has(cid); vus.add(cid);
-        if (edition === cid) {
-          const champ = el('input', { maxLength: 200, required: true, value: brouillons['e' + cid] ?? c.texte, oninput: () => brouillons['e' + cid] = champ.value });
-          return el('form', { className: 'mini', onsubmit: e => {
-            e.preventDefault();
-            const texte = champ.value.trim();
-            if (!texte) return;
-            edition = null; delete brouillons['e' + cid];
-            prouve(`preuvesComs/${id}/${cid}`, mesComs[cid], { [`commentaires/${id}/${cid}/texte`]: texte })
-              .catch(() => alert('Oups, modification refusée.'));
-            rendu();
-          } }, champ, el('button', { textContent: '✓', title: 'Enregistrer' }),
-            el('button', { type: 'button', textContent: '✕', title: 'Annuler', onclick: () => { edition = null; delete brouillons['e' + cid]; rendu(); } }));
-        }
-        const p = el('p', { className: neuf ? 'com neuf' : 'com' }, el('span', { textContent: c.texte }));
-        if (mesComs[cid]) {
-          const ed = el('button', { textContent: '✏️', title: 'Modifier mon commentaire', onclick: () => { edition = cid; rendu(); listes.querySelector(`li[data-id="${id}"] .mini input`)?.focus(); } });
-          ed.setAttribute('aria-label', 'Modifier mon commentaire');
-          p.append(ed);
-        }
-        if (mesComs[cid]) {
-          const x = el('button', { textContent: '🗑️', title: 'Supprimer mon commentaire', onclick: () => confirm('Supprimer ton commentaire ?') &&
-            prouve(`preuvesComs/${id}/${cid}`, mesComs[cid], { [`commentaires/${id}/${cid}`]: null })
-              .then(() => { delete mesComs[cid]; localStorage.setItem('mesComs', JSON.stringify(mesComs)); }) });
-          x.setAttribute('aria-label', 'Supprimer mon commentaire');
-          p.append(x);
-        }
-        return p;
-      }));
-    const champ = el('input', { placeholder: 'Ton commentaire…', maxLength: 200, required: true, value: brouillons[id] || '',
+    const bloc = el('div', { className: 'coms' }, ...liste.map(([cid, c]) => {
+      const neuf = !vus.has(cid); vus.add(cid);
+      if (edition === cid) {
+        const champ = el('input', { maxLength: 200, required: true, value: brouillons['e' + cid] ?? c.texte, oninput: () => brouillons['e' + cid] = champ.value });
+        return el('form', { className: 'mini', onsubmit: e => {
+          e.preventDefault();
+          const texte = champ.value.trim();
+          if (!texte) return;
+          edition = null; delete brouillons['e' + cid];
+          prouve(`preuvesComs/${id}/${cid}`, mesComs[cid], { [`commentaires/${id}/${cid}/texte`]: texte })
+            .catch(() => alert('Oups, modification refusée.'));
+          rendu();
+        } }, champ, el('button', { className: 'txt', textContent: 'Enregistrer' }),
+          el('button', { type: 'button', className: 'txt', textContent: 'Annuler', onclick: () => { edition = null; delete brouillons['e' + cid]; rendu(); } }));
+      }
+      const bulle = el('div', { className: 'bulle' }, el('p', { textContent: c.texte }));
+      if (mesComs[cid]) bulle.append(el('div', { className: 'liens-com' },
+        el('button', { type: 'button', textContent: 'Modifier', onclick: () => { edition = cid; rendu(); listes.querySelector(`li[data-id="${id}"] .mini input`)?.focus(); } }),
+        el('button', { type: 'button', textContent: 'Supprimer', onclick: () => confirm('Supprimer ton commentaire ?') &&
+          prouve(`preuvesComs/${id}/${cid}`, mesComs[cid], { [`commentaires/${id}/${cid}`]: null })
+            .then(() => { delete mesComs[cid]; localStorage.setItem('mesComs', JSON.stringify(mesComs)); }) })));
+      return el('div', { className: neuf ? 'com neuf' : 'com' }, el('span', { className: 'avatar', textContent: avatar(cid) }), bulle);
+    }));
+    const champ = el('input', { placeholder: 'Écrire un commentaire…', maxLength: 200, required: true, value: brouillons[id] || '',
       oninput: () => brouillons[id] = champ.value });
-    const f = el('form', { className: 'mini', onsubmit: e => {
+    champ.setAttribute('aria-label', 'Écrire un commentaire');
+    const envoyer = el('button', { textContent: '➤', title: 'Envoyer' });
+    envoyer.setAttribute('aria-label', 'Envoyer le commentaire');
+    bloc.append(el('form', { className: 'mini', onsubmit: e => {
       e.preventDefault();
       const texte = champ.value.trim();
       if (!texte) return;
       delete brouillons[id];
       const cid = coms.child(id).push().key, cle = crypto.randomUUID();
-      mesComs[cid] = cle; localStorage.setItem('mesComs', JSON.stringify(mesComs)); // avant l'écho temps réel, pour afficher 🗑️ direct
+      mesComs[cid] = cle; localStorage.setItem('mesComs', JSON.stringify(mesComs)); // avant l'écho temps réel, pour afficher Modifier/Supprimer direct
       db.ref().update({ [`commentaires/${id}/${cid}`]: { texte, t: firebase.database.ServerValue.TIMESTAMP }, [`secretsComs/${id}/${cid}`]: cle })
         .catch(() => { delete mesComs[cid]; localStorage.setItem('mesComs', JSON.stringify(mesComs)); alert('Oups, commentaire refusé.'); });
-      boum(e.submitter?.getBoundingClientRect().x ?? 0, e.submitter?.getBoundingClientRect().y ?? 0, 12);
-    } }, champ, el('button', { textContent: 'Envoyer' }));
-    d.append(f);
-    return d;
+      const r = envoyer.getBoundingClientRect(); boum(r.x, r.y, 12);
+    } }, el('span', { className: 'avatar', textContent: '🙂' }), champ, envoyer));
+    return bloc;
   }
+
+  const basculerComs = (id, focus) => {
+    if (ouverts.has(id) && !focus) ouverts.delete(id); else ouverts.add(id);
+    rendu();
+    if (focus) listes.querySelector(`li[data-id="${id}"] .coms > .mini input`)?.focus();
+  };
 
   function rendu() {
     const actuelle = enCours();
@@ -305,26 +311,35 @@
           } }, lien, t, sel, err, el('div', {}, el('button', { textContent: '✓ Enregistrer' }), el('button', { type: 'button', textContent: 'Annuler', onclick: fin }))));
           return li;
         }
-        const haut = el('button', { textContent: '👍', title: "J'aime", className: 'haut' + (votes[id] === 1 ? ' actif' : ''), onclick: e => voter(id, 1, e) });
-        const bas = el('button', { textContent: '👎', title: "J'aime pas", className: 'bas' + (votes[id] === -1 ? ' actif' : ''), onclick: e => voter(id, -1, e) });
+        const haut = el('button', { type: 'button', textContent: "👍 J'aime", className: 'haut' + (votes[id] === 1 ? ' actif' : ''), onclick: e => voter(id, 1, e) });
+        const bas = el('button', { type: 'button', textContent: '👎 Bof', className: 'bas' + (votes[id] === -1 ? ' actif' : ''), onclick: e => voter(id, -1, e) });
         haut.setAttribute('aria-label', `J'aime ${x.titre}`);
         bas.setAttribute('aria-label', `J'aime pas ${x.titre}`);
         const sp = x.url.includes('spotify');
         const medaille = tri === 'top' && i < 3 && x.votes > 0;
-        if (tri === 'top') li.append(el('span', { className: medaille ? 'rang' : 'rang n', textContent: medaille ? ['🥇', '🥈', '🥉'][i] : `#${i + 1}` }));
-        li.append(el('a', { href: x.url, target: '_blank', rel: 'noopener' }, el('span', { className: sp ? 'src sp' : 'src yt', textContent: sp ? '▶ Spotify' : '▶ YouTube' }), x.titre),
-          el('span', { className: 'votes' }, haut, el('span', { className: 'score' + (x.votes > 0 ? ' pos' : x.votes < 0 ? ' neg' : ''), textContent: x.votes }), bas));
+        const proprio = el('span', { className: 'proprio' });
         if (miens[id]) {
-          const ed = el('button', { textContent: '✏️', className: 'suppr', title: 'Modifier mon son', onclick: () => { editionSon = id; rendu(); listes.querySelector(`li[data-id="${id}"] input`)?.focus(); } });
+          const ed = el('button', { type: 'button', textContent: '✏️', title: 'Modifier mon son', onclick: () => { editionSon = id; rendu(); listes.querySelector(`li[data-id="${id}"] input`)?.focus(); } });
           ed.setAttribute('aria-label', `Modifier ${x.titre}`);
-          li.append(ed);
-          const x2 = el('button', { textContent: '🗑️', className: 'suppr', title: 'Supprimer mon son', onclick: () => confirm(`Supprimer « ${x.titre} » ?`) &&
+          const x2 = el('button', { type: 'button', textContent: '🗑️', title: 'Supprimer mon son', onclick: () => confirm(`Supprimer « ${x.titre} » ?`) &&
             prouve(`preuves/${id}`, miens[id], { [`songs/${id}`]: null, [`commentaires/${id}`]: null })
               .then(() => { delete miens[id]; localStorage.setItem('miens', JSON.stringify(miens)); }) });
           x2.setAttribute('aria-label', `Supprimer ${x.titre}`);
-          li.append(x2);
+          proprio.append(ed, x2);
         }
-        li.append(blocCommentaires(id));
+        const nb = Object.keys(commentaires[id] || {}).length;
+        li.append(
+          el('div', { className: 'tete' },
+            el('span', { className: medaille ? 'rang' : 'rang n', textContent: medaille ? ['🥇', '🥈', '🥉'][i] : tri === 'top' ? `#${i + 1}` : '🎵' }),
+            el('div', { className: 'qui' },
+              el('a', { className: 'titre', href: x.url, target: '_blank', rel: 'noopener', textContent: x.titre }),
+              el('span', { className: 'meta' }, el('b', { textContent: sp ? '▶ Spotify' : '▶ YouTube' }), ` · ${nom(x.decennie)}`)),
+            proprio),
+          el('div', { className: 'stats' },
+            el('span', { className: x.votes > 0 ? 'pos' : x.votes < 0 ? 'neg' : '', textContent: x.votes > 0 ? `👍 ${x.votes}` : x.votes < 0 ? `👎 ${-x.votes}` : '' }),
+            nb ? el('button', { type: 'button', textContent: `${nb} commentaire${nb > 1 ? 's' : ''}`, onclick: () => basculerComs(id) }) : ''),
+          el('div', { className: 'actions' }, haut, bas, el('button', { type: 'button', textContent: '💬 Commenter', onclick: () => basculerComs(id, true) })),
+          blocCommentaires(id));
         return li;
       })));
       return s;
